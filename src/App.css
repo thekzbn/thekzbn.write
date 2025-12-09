@@ -61,6 +61,7 @@
   display: flex;
   flex: 1; /* Takes remaining vertical space */
   overflow: hidden; /* Important for scrollable panes */
+  position: relative; /* For message banner positioning */
 }
 
 .editor-pane,
@@ -289,4 +290,109 @@
   display: flex;
   gap: 1rem;
   font-size: 1.5rem;
+}
+
+/* Firebase Load Section */
+.firebase-load-section {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-left: auto; /* Push to the right */
+}
+
+.small-input {
+  width: 150px; /* Adjust width as needed */
+  padding: 0.6em 0.8em;
+  font-size: 0.9rem;
+}
+
+/* Message Banner */
+.message-banner {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 0.8rem 1.5rem;
+  border-radius: 0 0 8px 8px;
+  font-weight: 600;
+  color: var(--purity);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  z-index: 1000; /* Ensure it's on top */
+}
+
+.message-banner.success {
+  background-color: #4CAF50; /* Green */
+}
+
+.message-banner.error {
+  background-color: #f44336; /* Red */
+}
+
+.message-banner.info {
+  background-color: #2196F3; /* Blue */
+}
+
+.message-banner .close-message {
+  background: none;
+  border: none;
+  color: var(--purity);
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.5rem;
+  line-height: 1;
+}
+
+.message-banner .close-message:hover {
+  opacity: 0.8;
+}
+
+/* Delete Button */
+.download-button.delete-button {
+  background-color: #f44336; /* Red for delete */
+  border-color: #f44336;
+}
+
+.download-button.delete-button:hover {
+  background-color: #d32f2f;
+  border-color: #d32f2f;
+}
+
+/* Adjust header and toolbar for small screens */
+@media (max-width: 768px) {
+  .editor-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .editor-header h1 {
+    margin-bottom: 0.5rem;
+  }
+
+  .editor-header .title-input {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .editor-header .download-button {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .editor-toolbar-container {
+    justify-content: center;
+    padding: 0.5rem;
+  }
+
+  .firebase-load-section {
+    margin-left: 0;
+    justify-content: center;
+    width: 100%;
+  }
+
+  .firebase-load-section .small-input {
+    width: calc(100% - 70px); /* Adjust based on button width */
+  }
 }
