@@ -1,0 +1,140 @@
+.markdown-editor-app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+  overflow: hidden;
+  background-color: var(--purity);
+  color: var(--depth);
+}
+
+.editor-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: var(--purity);
+  border-bottom: 1px solid var(--serenity);
+  gap: 1rem; /* Space between header elements */
+  flex-wrap: wrap; /* Allow items to wrap on smaller screens */
+}
+
+.editor-header h1 {
+  font-size: 1.8rem;
+  margin: 0;
+  color: var(--depth);
+  flex-shrink: 0; /* Prevent heading from shrinking */
+}
+
+.title-input {
+  flex-grow: 1; /* Allows the input to take up available space */
+  min-width: 200px; /* Ensures input is not too small on wrap */
+  padding: 0.8em 1em;
+  border: 1px solid var(--heritage);
+  border-radius: 6px;
+  font-size: 1rem;
+  color: var(--depth);
+  background-color: var(--serenity);
+}
+
+.title-input:focus {
+  border-color: var(--radiance);
+  outline: none;
+}
+
+.download-button {
+  padding: 0.8em 1.5em;
+  background-color: var(--radiance);
+  color: var(--purity);
+  border: 1px solid var(--radiance);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+  font-weight: 600;
+}
+
+.download-button:hover {
+  background-color: var(--heritage);
+  border-color: var(--heritage);
+}
+
+.editor-main {
+  display: flex;
+  flex: 1; /* Takes remaining vertical space */
+  overflow: hidden; /* Important for scrollable panes */
+}
+
+.editor-pane,
+.preview-pane {
+  flex: 1; /* Each pane takes equal width */
+  height: 100%;
+  overflow-y: auto; /* Enable vertical scrolling */
+  padding: 1.5rem;
+  box-sizing: border-box; /* Include padding in width/height */
+}
+
+.editor-pane {
+  border-right: 1px solid var(--serenity);
+  background-color: var(--purity);
+}
+
+.markdown-textarea {
+  width: 100%;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  color: var(--depth);
+  font-size: 1rem;
+  line-height: 1.6;
+  resize: none; /* Disable manual resize */
+  outline: none; /* Remove focus outline */
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", sans-serif;
+}
+
+.preview-pane {
+  background-color: var(--serenity);
+  word-wrap: break-word; /* Ensure long words break */
+}
+
+/* Markdown specific styling for preview pane */
+.preview-pane h1 { font-size: 2.25rem; margin-top: 1em; margin-bottom: 0.5em; color: var(--depth); }
+.preview-pane h2 { font-size: 1.875rem; margin-top: 1em; margin-bottom: 0.5em; color: var(--depth); }
+.preview-pane h3 { font-size: 1.5rem; margin-top: 1em; margin-bottom: 0.5em; color: var(--depth); }
+.preview-pane h4 { font-size: 1.25rem; margin-top: 1em; margin-bottom: 0.5em; color: var(--depth); }
+.preview-pane h5 { font-size: 1.125rem; margin-top: 1em; margin-bottom: 0.5em; color: var(--depth); }
+.preview-pane h6 { font-size: 1rem; margin-top: 1em; margin-bottom: 0.5em; color: var(--depth); }
+
+.preview-pane p {
+  margin-bottom: 1em;
+}
+
+.preview-pane ul,
+.preview-pane ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1em;
+}
+
+.preview-pane li {
+  margin-bottom: 0.5em;
+}
+
+.preview-pane blockquote {
+  border-left: 4px solid var(--radiance);
+  padding-left: 1em;
+  margin-left: 0;
+  color: #555;
+  font-style: italic;
+}
+
+.preview-pane pre {
+  background-color: var(--purity); /* Slightly different background for code blocks */
+  border: 1px solid var(--serenity);
+  border-radius: 4px;
+  padding: 1em;
+  overflow-x: auto;
+}
+
+.preview-pane code {
+  background-color: var(--serenity);
+  padding: 0.2em 0.4em;
+  border-radius: 3px;
+}

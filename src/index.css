@@ -1,0 +1,142 @@
+/* Global Styles for Theking's Blog Companion App */
+
+/* Inter Variable Font - Roman */
+@font-face {
+  font-family: 'Inter';
+  src: url('https://cdn.thekzbn.name.ng/assets/font/InterVariable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Inter Variable Font - Italic */
+@font-face {
+  font-family: 'Inter';
+  src: url('https://cdn.thekzbn.name.ng/assets/font/InterVariable-Italic.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+:root {
+  /* Theme Colors */
+  --radiance: #d6ad60; /* Primary Accent */
+  --purity: #ffffff; /* Primary Background */
+  --depth: #122620; /* Primary Text */
+  --heritage: #b68d40; /* Secondary Accent/Hover */
+  --serenity: #f4ebd0; /* Light Accent Background */
+
+
+  /* Global Transitions */
+  transition: all 0.5s cubic-bezier(0.57, -0.01, 0.21, 0.89);
+}
+
+/* Base Styles */
+html, body, #root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", sans-serif;
+  color: var(--depth);
+  background-color: var(--purity);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  font-feature-settings:
+    "cv01" 1, "cv02" 1, "cv03" 1, "cv04" 1, "cv05" 1,
+    "cv06" 1, "cv07" 1, "cv08" 1, "cv09" 1, "cv10" 1,
+    "cv11" 1, "cv12" 1, "cv13" 1, "cv14" 1, "liga" 1,
+    "calt" 1, "zero" 1;
+  font-variant-ligatures: common-ligatures discretionary-ligatures;
+}
+
+a {
+  color: var(--radiance);
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+  color: var(--heritage);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--depth);
+  line-height: 1.2;
+  margin-top: 1em;
+  margin-bottom: 0.5em;
+  font-weight: 700;
+}
+
+h1 { font-size: 2.25rem; } /* 36px */
+h2 { font-size: 1.875rem; } /* 30px */
+h3 { font-size: 1.5rem; } /* 24px */
+h4 { font-size: 1.25rem; } /* 20px */
+h5 { font-size: 1.125rem; } /* 18px */
+h6 { font-size: 1rem; } /* 16px */
+
+p {
+  margin-top: 0;
+  margin-bottom: 1em;
+}
+
+/* Code Blocks and Inline Code */
+code, pre {
+  font-family: 'Courier New', Courier, monospace;
+  background-color: var(--serenity);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+}
+
+pre {
+  display: block;
+  padding: 1em;
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+/* Form Elements */
+button, input[type="text"], textarea {
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", sans-serif;
+  font-size: 1rem;
+  padding: 0.75em 1em;
+  border: 1px solid var(--heritage);
+  border-radius: 6px;
+  color: var(--depth);
+  background-color: var(--purity);
+  transition: all 0.3s ease-in-out;
+}
+
+button {
+  cursor: pointer;
+  background-color: var(--radiance);
+  color: var(--purity);
+  border-color: var(--radiance);
+}
+
+button:hover {
+  background-color: var(--heritage);
+  border-color: var(--heritage);
+}
+
+input[type="text"]:focus, textarea:focus {
+  outline: none;
+  border-color: var(--radiance);
+}
+
+textarea {
+  resize: vertical;
+}
+
+/* Utility Classes (optional, but good practice for consistency) */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
