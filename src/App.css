@@ -138,3 +138,155 @@
   padding: 0.2em 0.4em;
   border-radius: 3px;
 }
+
+.editor-toolbar-container {
+  padding: 0.5rem 1.5rem;
+  background-color: var(--purity);
+  border-bottom: 1px solid var(--serenity);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.editor-toolbar button {
+  background-color: transparent;
+  border: 1px solid transparent;
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--depth);
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  font-size: 1.2rem; /* Icon size */
+}
+
+.editor-toolbar button:hover {
+  background-color: var(--serenity);
+  color: var(--radiance);
+}
+
+.editor-toolbar button:active {
+  background-color: var(--heritage);
+  color: var(--purity);
+}
+
+.editor-toolbar .separator {
+  width: 1px;
+  height: 1.5rem;
+  background-color: var(--serenity);
+  margin: 0 0.5rem;
+}
+
+/* Style for icon in codeblock button to flip it */
+.editor-toolbar button svg[style*="transform: scaleX(-1)"] {
+  transform: scaleX(-1);
+}
+
+
+/* New styles for App wrapper, Home page, and Footer */
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* Ensure it takes full viewport height */
+}
+
+.home-container {
+  flex: 1; /* Allows home content to push footer down */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--purity);
+  color: var(--depth);
+}
+
+.home-title {
+  font-size: 3rem;
+  color: var(--radiance);
+  margin-bottom: 0.5rem;
+}
+
+.home-description {
+  font-size: 1.2rem;
+  max-width: 600px;
+  margin-bottom: 2rem;
+}
+
+.home-links {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.button {
+  padding: 0.8em 1.5em;
+  border-radius: 6px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s ease-in-out;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.primary-button {
+  background-color: var(--radiance);
+  color: var(--purity);
+  border: 1px solid var(--radiance);
+}
+
+.primary-button:hover {
+  background-color: var(--heritage);
+  border-color: var(--heritage);
+}
+
+.secondary-button {
+  background-color: transparent;
+  color: var(--radiance);
+  border: 1px solid var(--radiance);
+}
+
+.secondary-button:hover {
+  background-color: var(--serenity);
+  border-color: var(--heritage);
+  color: var(--heritage);
+}
+
+.app-footer {
+  padding: 1rem 1.5rem;
+  background-color: var(--purity);
+  border-top: 1px solid var(--serenity);
+  text-align: center;
+  color: var(--depth);
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.app-footer p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.app-footer a {
+  color: var(--radiance);
+  text-decoration: none;
+}
+
+.app-footer a:hover {
+  color: var(--heritage);
+}
+
+.app-footer .social-links {
+  display: flex;
+  gap: 1rem;
+  font-size: 1.5rem;
+}
