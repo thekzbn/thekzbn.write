@@ -13,7 +13,9 @@ import {
   MdTableChart,
   MdLink,
   MdImage,
+  MdCloudUpload,
   MdFormatIndentIncrease,
+
   MdFormatIndentDecrease,
 } from 'react-icons/md';
 
@@ -42,11 +44,12 @@ const Toolbar: React.FC<ToolbarProps> = ({ onAction }) => {
       <button onClick={() => onAction('quote')} title="Blockquote"><MdFormatQuote /></button>
       <span className="separator" />
       <button onClick={() => onAction('code')} title="Code (Inline)"><MdCode /></button>
-      <button onClick={() => onAction('codeblock')} title="Code Block"><MdCode style={{ transform: 'scaleX(-1)' }} /></button>
+      <button onClick={() => onAction('codeblock')} title="Code Block"><span style={{ display: 'inline-block', transform: 'scaleX(-1)' }}><MdCode /></span></button>
       <span className="separator" />
       <button onClick={() => onAction('table')} title="Insert Table"><MdTableChart /></button>
       <button onClick={() => onAction('link')} title="Insert Link"><MdLink /></button>
-      <button onClick={() => onAction('image')} title="Insert Image"><MdImage /></button>
+      <button onClick={() => onAction('image')} title="Insert Image (URL)"><MdImage /></button>
+      <button onClick={() => onAction('upload-image')} title="Upload Image"><MdCloudUpload /></button>
     </div>
   );
 };

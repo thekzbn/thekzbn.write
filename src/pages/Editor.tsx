@@ -1,7 +1,10 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { marked } from 'marked';
-import { db } from '../firebase'; // Import Firestore db
+import { useAuth } from '../contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
+import { db, storage } from '../firebase'; // Import Firestore db and storage
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import Toolbar from '../components/Toolbar'; // Import the Toolbar component
 import { v4 as uuidv4 } from 'uuid'; // For generating unique IDs
 import { MdOutlineSave, MdOutlineClear, MdOutlineDeleteOutline, MdOutlineOpenInBrowser } from 'react-icons/md';
@@ -10,7 +13,7 @@ import '../App.css'; // Global application styles
 
 // Helper to debounce function calls
 const debounce = (func: (...args: any[]) => void, delay: number) => {
-  let timeout: NodeJS.Timeout;
+  let timeout: ReturnType<typeof setTimeout>;
   return (...args: any[]) => {
     clearTimeout(timeout);
     timeout = setTimeout(() => func(...args), delay);
@@ -18,6 +21,8 @@ const debounce = (func: (...args: any[]) => void, delay: number) => {
 };
 
 function Editor() {
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const [title, setTitle] = useState<string>('');
   const [markdownContent, setMarkdownContent] = useState<string>(
     localStorage.getItem('savedMarkdownContent') || '## Welcome to the Markdown Editor!\n\nStart writing your **blog post** here. You can use Markdown syntax to format your content.\n\n### Features:\n* Live preview\n* Save and Load online\n* Autosave\n\n```javascript\n// Code blocks are supported too!\nconst message = "Hello, world!";\nconsole.log(message);\n```\n\nEnjoy!'
@@ -30,6 +35,7 @@ function Editor() {
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' | 'info' } | null>(null);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // Initialize markdown content from local storage or default
   useEffect(() => {
@@ -65,6 +71,8 @@ function Editor() {
         title,
         markdownContent,
         updatedAt: new Date(),
+        userId: user?.uid, // Attach user ID
+        authorName: user?.displayName || 'Anonymous',
       });
       setDocumentId(id);
       setMessage({ text: `Post saved successfully! ID: ${id}`, type: 'success' });
@@ -89,8 +97,15 @@ function Editor() {
         const data = docSnap.data();
         setTitle(data.title);
         setMarkdownContent(data.markdownContent);
-        setDocumentId(id);
-        setMessage({ text: `Post "${data.title}" loaded successfully!`, type: 'success' });
+
+        // If the post belongs to another user, treat it as a new copy (fork)
+        if (data.userId && data.userId !== user?.uid) {
+          setDocumentId('');
+          setMessage({ text: `Post "${data.title}" loaded as a copy (read-only original).`, type: 'info' });
+        } else {
+          setDocumentId(id);
+          setMessage({ text: `Post "${data.title}" loaded successfully!`, type: 'success' });
+        }
       } else {
         setMessage({ text: 'No such document found!', type: 'error' });
       }
@@ -121,6 +136,34 @@ function Editor() {
       setMessage({ text: 'Error deleting post.', type: 'error' });
     }
   }, [documentId]);
+
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!user) {
+      setMessage({ text: 'You must be logged in to upload files.', type: 'error' });
+      return;
+    }
+
+    try {
+      const storageRef = ref(storage, `users/${user.uid}/uploads/${uuidv4()}_${file.name}`);
+      setMessage({ text: 'Uploading...', type: 'info' });
+      const snapshot = await uploadBytes(storageRef, file);
+      const downloadURL = await getDownloadURL(snapshot.ref);
+
+      insertAtCursor('![', `](${downloadURL})`, file.name);
+      setMessage({ text: 'Image uploaded successfully!', type: 'success' });
+    } catch (error) {
+      console.error("Error uploading file:", error);
+      setMessage({ text: 'Error uploading file.', type: 'error' });
+    } finally {
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''; // Reset input
+      }
+    }
+  };
+
 
   const clearEditor = useCallback(() => {
     if (!window.confirm('Are you sure you want to clear the editor? Any unsaved changes will be lost.')) {
@@ -163,17 +206,17 @@ function Editor() {
     const newContent = event.target.value;
     // Only add to history if content changed and it's not an undo/redo
     if (newContent !== history[historyPointer]) {
-        setMarkdownContent(newContent);
-        setHistory((prevHistory) => {
-            const newHistory = prevHistory.slice(0, historyPointer + 1);
-            return [...newHistory, newContent];
-        });
-        setHistoryPointer((prevPointer) => prevPointer + 1);
+      setMarkdownContent(newContent);
+      setHistory((prevHistory) => {
+        const newHistory = prevHistory.slice(0, historyPointer + 1);
+        return [...newHistory, newContent];
+      });
+      setHistoryPointer((prevPointer) => prevPointer + 1);
     }
   };
 
 
-  const insertAtCursor = useCallback(( 
+  const insertAtCursor = useCallback((
     startTag: string,
     endTag: string = '',
     placeholder: string = ''
@@ -198,7 +241,7 @@ function Editor() {
       cursorOffset = startTag.length + placeholder.length;
     }
 
-    const newContent = 
+    const newContent =
       markdownContent.substring(0, start) +
       newText +
       markdownContent.substring(end);
@@ -239,12 +282,12 @@ function Editor() {
 
     // Apply prefix to selected lines or current line if no selection
     for (let i = 0; i < lines.length; i++) {
-      if ((startLineIndex === -1 && i === lines.length - 1) || (i >= startLineIndex && i <= endLineIndex)) { 
+      if ((startLineIndex === -1 && i === lines.length - 1) || (i >= startLineIndex && i <= endLineIndex)) {
         let line = lines[i];
         if (!line.startsWith(prefix)) {
-            newContentLines.push(prefix + (line || defaultText));
+          newContentLines.push(prefix + (line || defaultText));
         } else {
-            newContentLines.push(line); // Already has prefix, don't double
+          newContentLines.push(line); // Already has prefix, don't double
         }
       } else {
         newContentLines.push(lines[i]);
@@ -296,7 +339,7 @@ function Editor() {
         break;
       case 'heading':
         if (value === 'h2') {
-            applyLineMarkdown('## ', 'Your Heading');
+          applyLineMarkdown('## ', 'Your Heading');
         }
         break;
       case 'ol':
@@ -334,37 +377,40 @@ function Editor() {
           insertAtCursor('![', `]()`, 'alt text');
         }
         break;
+      case 'upload-image':
+        fileInputRef.current?.click();
+        break;
       case 'indent':
       case 'outdent':
         // Indent/Outdent logic (more complex, requires line-by-line processing)
         // For simplicity, I'll implement a basic tab insert/remove for selected lines
-        const lines = markdownContent.substring(start, end).split('\n');
+        const lines = selectedText.split('\n');
         const indentation = action === 'indent' ? '  ' : ''; // Use 2 spaces for indent for markdown lists/code
         let newLines = lines.map(line => {
-            // Check if line starts with a list item or code block prefix and apply/remove indent appropriately
-            // This is a simplified implementation; a full-featured one would be more robust.
-            if (action === 'indent') {
-                return indentation + line;
-            } else { // outdent
-                if (line.startsWith('  ')) {
-                    return line.substring(2);
-                } else if (line.startsWith('\t')) { // also handle tabs if any
-                    return line.substring(1);
-                }
-                return line;
+          // Check if line starts with a list item or code block prefix and apply/remove indent appropriately
+          // This is a simplified implementation; a full-featured one would be more robust.
+          if (action === 'indent') {
+            return indentation + line;
+          } else { // outdent
+            if (line.startsWith('  ')) {
+              return line.substring(2);
+            } else if (line.startsWith('\t')) { // also handle tabs if any
+              return line.substring(1);
             }
+            return line;
+          }
         }).join('\n');
 
-        const newContent = 
-            markdownContent.substring(0, start) +
-            newLines +
-            markdownContent.substring(end);
+        const newContent =
+          markdownContent.substring(0, start) +
+          newLines +
+          markdownContent.substring(end);
 
         updateMarkdownContent(newContent);
 
         requestAnimationFrame(() => {
-            textarea.selectionStart = start;
-            textarea.selectionEnd = start + newLines.length;
+          textarea.selectionStart = start;
+          textarea.selectionEnd = start + newLines.length;
         });
         break;
       default:
@@ -436,7 +482,19 @@ function Editor() {
             <MdOutlineDeleteOutline /> Delete
           </button>
         )}
+        <button onClick={async () => { await signOut(); navigate('/'); }} className="download-button" title="Sign Out">
+          Sign Out
+        </button>
       </header>
+
+      {/* Hidden file input for uploads */}
+      <input
+        type="file"
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        accept="image/*"
+        onChange={handleFileUpload}
+      />
 
       <div className="editor-toolbar-container">
         <Toolbar onAction={handleMarkdownAction} />

@@ -1,6 +1,7 @@
-// src/firebase.ts
-import { initializeApp, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
+import { initializeApp, type FirebaseApp } from 'firebase/app';
+import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { getStorage } from 'firebase/storage';
 
 // Firebase configuration using environment variables
 // These will need to be set in your Vercel project's environment variables
@@ -25,18 +26,12 @@ if (!initializeApp.length) { // This check is a common pattern for Vite/React se
   app = initializeApp(firebaseConfig);
   db = getFirestore(app);
 } else {
-  // If already initialized, get the existing instance (though usually initializeApp handles this)
-  // This part might vary based on how initializeApp handles subsequent calls in a dev environment.
-  // For most modern setups, simply calling initializeApp again with the same config
-  // will return the existing app instance without error.
-  // However, for explicit handling during development:
-  // app = getApps().length ? getApp() : initializeApp(firebaseConfig);
-  // db = getFirestore(app);
-  // A simpler approach for Vite is to let initializeApp manage itself or use the above commented code if issues arise.
-  // For now, we'll assume initializeApp handles subsequent calls gracefully for the sake of brevity.
+  // If already initialized, get the existing instance
   app = initializeApp(firebaseConfig);
   db = getFirestore(app);
 }
 
+const auth = getAuth(app);
+const storage = getStorage(app);
 
-export { app, db };
+export { app, db, auth, storage };
